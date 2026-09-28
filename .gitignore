@@ -1,0 +1,18 @@
+# vendor/ is intentionally committed — the client needs the complete package,
+# installable without running composer on the production server.
+node_modules
+npm-debug.log
+yarn-error.log
+/.idea
+/.vscode
+/public/storage
+/storage/*.key
+storage/framework/cache/*
+!storage/framework/cache/.gitignore
+storage/framework/sessions/*
+!storage/framework/sessions/.gitignore
+storage/framework/views/*
+!storage/framework/views/.gitignore
+storage/logs/*.log
+bootstrap/cache/*.php
+.env.backup

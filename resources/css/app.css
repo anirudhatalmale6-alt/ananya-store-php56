@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------------------------------------------------------------------
+   Ananya theme — primary #FF0000 on a pure white (#FFFFFF) background.
+   Base element defaults so any un-classed markup still follows the theme.
+--------------------------------------------------------------------------- */
+@layer base {
+    html,
+    body {
+        background-color: #FFFFFF;
+        color: #111111;
+    }
+
+    a {
+        color: #FF0000;
+    }
+
+    a:hover {
+        color: #CC0000;
+    }
+
+    ::selection {
+        background-color: #FF0000;
+        color: #FFFFFF;
+    }
+}

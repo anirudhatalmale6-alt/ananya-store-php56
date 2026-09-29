@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 /* ---------------------------------------------------------------------------
-   Ananya theme — primary #FF0000 on a pure white (#FFFFFF) background.
-   Base element defaults so any un-classed markup still follows the theme.
+   Ananya theme.
+
+   Primary #FF0000 on a white background, with near-black body copy. Red is
+   reserved for calls to action, prices, active states and a small number of
+   important sub-headings — it is never used for long-form text.
 --------------------------------------------------------------------------- */
+
 @layer base {
     html,
     body {
@@ -13,16 +17,67 @@
         color: #111111;
     }
 
-    a {
-        color: #FF0000;
-    }
-
-    a:hover {
-        color: #CC0000;
+    /* Display face for headings, matching the reference UI. */
+    h1, h2, h3, h4, h5 {
+        color: #111111;
     }
 
     ::selection {
         background-color: #FF0000;
         color: #FFFFFF;
     }
+}
+
+@layer components {
+    /* Brand gradient — the same treatment the reference applies to its bars
+       and primary buttons, built from the specified #FF0000. */
+    .brand-gradient-bg {
+        background: linear-gradient(135deg, #FF0000 0%, #CC0000 55%, #990000 100%);
+    }
+
+    .gold-gradient-bg {
+        background: linear-gradient(135deg, #BF953F 0%, #D4AF37 50%, #AA771C 100%);
+    }
+
+    .gold-gradient-text {
+        background: linear-gradient(135deg, #BF953F 0%, #F3E5AB 25%, #B38728 50%, #F3E5AB 75%, #AA771C 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.85);
+        -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
+    }
+
+    /* Section eyebrow label: small, uppercase, red. One of the few places
+       the primary colour is applied to text. */
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.6875rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #CC0000;
+    }
+}
+
+/* Thin branded scrollbar, as in the reference. */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #F4F1EA;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #CC0000;
+    border-radius: 9999px;
 }

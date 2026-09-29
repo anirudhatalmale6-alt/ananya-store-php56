@@ -15,10 +15,10 @@
                 <p class="flex items-center gap-2 text-brand-dark font-medium tracking-wide mb-3">
                     <span class="w-8 h-px bg-brand"></span> From Our Home to Yours
                 </p>
-                <h1 class="font-serif text-5xl md:text-6xl font-bold leading-[1.05] text-brand">
-                    Elevate Every<br><span class="text-brand-dark italic">Experience</span>
+                <h1 class="font-serif text-5xl md:text-6xl font-bold leading-[1.05] text-ink">
+                    Elevate Every<br><span class="gold-gradient-text italic">Experience</span>
                 </h1>
-                <p class="mt-5 text-stone-500 text-lg max-w-md leading-relaxed">
+                <p class="mt-5 text-gray-500 text-lg max-w-md leading-relaxed">
                     Premium Kitchen Appliances, Divine Essentials &amp; Timeless Brass Creations.
                 </p>
                 <div class="mt-8 flex flex-wrap items-center gap-4">
@@ -33,7 +33,7 @@
                         WATCH OUR STORY
                     </a>
                 </div>
-                <div class="mt-8 flex items-center gap-3 text-sm text-stone-400">
+                <div class="mt-8 flex items-center gap-3 text-sm text-gray-400">
                     <span class="font-serif text-brand font-semibold">01</span>
                     <span class="w-10 h-0.5 bg-brand rounded"></span>
                     <span>02</span>
@@ -67,7 +67,7 @@
                     <img src="{{ asset('img/'.$c['img']) }}" alt="{{ $c['title'] }}" class="max-h-24 max-w-full object-contain group-hover:scale-105 transition-transform duration-300">
                 </div>
                 <div class="{{ $c['tall'] ? '' : 'mt-3' }}">
-                    <h3 class="font-serif text-lg text-brand leading-tight">{{ $c['title'] }}</h3>
+                    <h3 class="font-serif text-lg text-ink leading-tight">{{ $c['title'] }}</h3>
                     <span class="mt-1 inline-flex items-center gap-1 text-xs font-semibold tracking-wide text-brand-dark uppercase">
                         Explore <svg class="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </span>
@@ -103,8 +103,8 @@
                         @endif
                     </span>
                     <div>
-                        <h4 class="font-semibold text-brand text-sm">{{ $f['t'] }}</h4>
-                        <p class="text-xs text-stone-500 mt-1">{{ $f['d'] }}</p>
+                        <h4 class="font-semibold text-ink text-sm">{{ $f['t'] }}</h4>
+                        <p class="text-xs text-gray-500 mt-1">{{ $f['d'] }}</p>
                     </div>
                 </div>
             @endforeach
@@ -115,7 +115,7 @@
 {{-- ============ EXCLUSIVE OFFERS ============ --}}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="text-center mb-8">
-        <h2 class="font-serif text-3xl text-brand">Exclusive Offers</h2>
+        <h2 class="font-serif text-3xl text-ink">Exclusive Offers</h2>
         <span class="mt-2 inline-block w-24 h-0.5 bg-brand rounded"></span>
     </div>
     <div class="grid lg:grid-cols-2 gap-6">
@@ -123,8 +123,8 @@
         <div class="relative overflow-hidden rounded-2xl border border-brand/25 bg-gradient-to-r from-surface-alt to-white shadow-card">
             <div class="flex items-center h-full">
                 <div class="p-8 flex-1">
-                    <h3 class="font-serif text-2xl md:text-3xl text-brand"><span class="text-brand-dark">Festive</span> Mega Sale</h3>
-                    <p class="mt-2 text-stone-500">Up to</p>
+                    <h3 class="font-serif text-2xl md:text-3xl text-ink"><span class="text-brand-dark">Festive</span> Mega Sale</h3>
+                    <p class="mt-2 text-gray-500">Up to</p>
                     <p class="font-serif text-5xl md:text-6xl font-bold text-brand leading-none">30<span class="text-brand-dark text-3xl align-top">% OFF</span></p>
                     <a href="{{ route('shop.index') }}" class="mt-5 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-brand hover:bg-brand-light text-white text-sm font-semibold tracking-wide transition">
                         SHOP NOW <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -139,7 +139,7 @@
         <div class="grid grid-rows-2 gap-6">
             <div class="flex items-center rounded-2xl border border-brand/25 bg-white shadow-card overflow-hidden">
                 <div class="p-6 flex-1">
-                    <h4 class="font-serif text-lg text-brand">Sowbhagya Special Offer</h4>
+                    <h4 class="font-serif text-lg text-ink">Sowbhagya Special Offer</h4>
                     <p class="font-serif text-2xl font-bold text-brand-dark mt-1">20% OFF</p>
                     <a href="{{ route('shop.index') }}" class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-brand uppercase hover:text-brand-dark transition">
                         Shop Now <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -149,9 +149,9 @@
             </div>
             <div class="flex items-center rounded-2xl border border-brand/25 bg-white shadow-card overflow-hidden">
                 <div class="p-6 flex-1">
-                    <h4 class="font-serif text-lg text-brand">Hotel Kitchen Combo Offers</h4>
-                    <p class="text-xs text-stone-400 mt-1 uppercase tracking-wide">Starting from</p>
-                    <p class="font-serif text-2xl font-bold text-brand-dark">&#8377;24,999</p>
+                    <h4 class="font-serif text-lg text-ink">Hotel Kitchen Combo Offers</h4>
+                    <p class="text-xs text-gray-400 mt-1 uppercase tracking-wide">Starting from</p>
+                    <p class="font-serif text-2xl font-bold text-brand-dark">{{ config('store.currency') }} 24,999</p>
                     <a href="{{ route('shop.index') }}" class="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold tracking-wide text-brand uppercase hover:text-brand-dark transition">
                         Shop Now <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
@@ -165,9 +165,9 @@
 {{-- ============ AUTHORIZED BRAND ============ --}}
 <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
     <div class="text-center mb-6">
-        <p class="text-xs tracking-[0.25em] uppercase text-stone-400">Authorized Agents of</p>
+        <p class="text-xs tracking-[0.25em] uppercase text-gray-400">Authorized Agents of</p>
         <img src="{{ asset('img/cat-sowbhagya.png') }}" alt="Sowbhagya" class="h-16 mx-auto my-3 object-contain">
-        <p class="text-stone-500 text-sm">Trusted Brand. Trusted by Millions.</p>
+        <p class="text-gray-500 text-sm">Trusted Brand. Trusted by Millions.</p>
     </div>
 
     @php
@@ -190,7 +190,7 @@
             @foreach($brandTrust as $b)
                 <div class="flex flex-col items-center text-center gap-2 p-6">
                     <span class="w-11 h-11 rounded-full bg-brand/10 border border-brand/30 flex items-center justify-center text-brand-dark">@include('partials.trust-icon', ['icon' => $b['icon']])</span>
-                    <span class="text-sm font-medium text-brand">{{ $b['t'] }}</span>
+                    <span class="text-sm font-medium text-ink">{{ $b['t'] }}</span>
                 </div>
             @endforeach
         </div>
@@ -200,7 +200,7 @@
             @foreach($service as $s)
                 <div class="flex flex-col items-center text-center gap-2 p-6">
                     <span class="w-11 h-11 rounded-full bg-brand/5 border border-brand/15 flex items-center justify-center text-brand">@include('partials.trust-icon', ['icon' => $s['icon']])</span>
-                    <span class="text-sm font-medium text-brand">{{ $s['t'] }}</span>
+                    <span class="text-sm font-medium text-ink">{{ $s['t'] }}</span>
                 </div>
             @endforeach
         </div>

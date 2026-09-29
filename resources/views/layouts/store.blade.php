@@ -1,147 +1,186 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>@yield('title', 'Ananya - Where Tradition Meets Excellence')</title>
+    <title>@yield('title', config('store.name', 'Ananya') . ' - ' . config('store.tagline'))</title>
 
-    {{-- Fonts --}}
-    <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=playfair-display:400,500,600,700|poppins:300,400,500,600,700&display=swap" rel="stylesheet" />
+    {{-- Fonts: Cinzel (display) + Plus Jakarta Sans (body) --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @stack('styles')
 </head>
-<body class="font-sans antialiased bg-white text-ink">
+<body class="font-sans bg-white text-ink antialiased custom-scrollbar">
 
 @php
-    // Homepage nav mirrors the client's storefront design.
-    $mainNav = [
-        ['label' => 'Kitchen Appliances', 'url' => route('shop.index')],
-        ['label' => 'Brass Statues',      'url' => route('shop.index')],
-        ['label' => 'Temple Items',        'url' => route('shop.index')],
-        ['label' => 'Hotel Kitchen',       'url' => route('shop.index')],
-        ['label' => 'Sowbhagya Brand',     'url' => route('shop.index')],
-        ['label' => 'Offers',              'url' => route('shop.index')],
-    ];
-    $navCartCount = 0;
-    if (isset($cartItemCount)) { $navCartCount = $cartItemCount; }
+    $navItems = array(
+        array('label' => 'Kitchen Appliances', 'slug' => 'kitchen-appliances', 'badge' => null),
+        array('label' => 'Brass Statues',      'slug' => 'brass-statues',      'badge' => 'Handcrafted'),
+        array('label' => 'Temple Items',       'slug' => 'temple-items',       'badge' => null),
+        array('label' => 'Hotel Kitchen',      'slug' => 'hotel-kitchen',      'badge' => null),
+        array('label' => 'Sowbhagya Brand',    'slug' => 'sowbhagya-brand',    'badge' => null, 'highlight' => true),
+    );
+    $navCartCount = isset($cartItemCount) ? $cartItemCount : 0;
+    $navCats = isset($navCategories) ? $navCategories : collect();
+    $activeCat = request('category');
 @endphp
 
-{{-- ============ TOP ANNOUNCEMENT BAR ============ --}}
-<div class="bg-brand text-white text-xs">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-9">
+{{-- ============================ TOP ANNOUNCEMENT BAR ============================ --}}
+<div class="brand-gradient-bg text-white text-xs py-2 px-4 shadow-sm border-b border-gold/30">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
         <div class="flex items-center gap-2">
-            <svg class="w-3.5 h-3.5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M18 3a1 1 0 00-1.196-.98l-10 2A1 1 0 006 5v6.114A4.369 4.369 0 005 11c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V7.82l8-1.6v3.894A4.37 4.37 0 0015 10c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2V3z"/></svg>
-            <span class="tracking-wide">Welcome to Ananya &ndash; Where Tradition Meets Excellence</span>
+            <span class="inline-block w-2 h-2 rounded-full bg-gold animate-pulse"></span>
+            <p class="font-medium tracking-wide">Welcome to {{ config('store.name') }} &ndash; {{ config('store.tagline') }}</p>
         </div>
-        <div class="hidden sm:flex items-center gap-5">
-            <a href="{{ route('shop.index') }}" class="flex items-center gap-1.5 hover:text-white/75 transition">
+        <div class="hidden md:flex items-center space-x-6 text-xs font-medium">
+            <a href="{{ route('shop.index') }}" class="hover:text-gold-light transition-colors flex items-center gap-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM20 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 001 1h2m-3-1V8a1 1 0 011-1h3.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1"/></svg>
                 Track Order
             </a>
-            <a href="{{ route('shop.index') }}" class="flex items-center gap-1.5 hover:text-white/75 transition">
-                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                Wishlist
-            </a>
-            @auth
-                <a href="{{ route('customer.dashboard') }}" class="flex items-center gap-1.5 hover:text-white/75 transition">
+            @if(Auth::check())
+                <a href="{{ route('customer.dashboard') }}" class="hover:text-gold-light transition-colors flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    {{ Str::limit(Auth::user()->name, 12) }}
+                    {{ Str::limit(Auth::user()->name, 14) }}
                 </a>
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    {{ csrf_field() }}
+                    <button type="submit" class="hover:text-gold-light transition-colors">Logout</button>
+                </form>
             @else
-                <a href="{{ route('login') }}" class="flex items-center gap-1.5 hover:text-white/75 transition">
+                <a href="{{ route('login') }}" class="hover:text-gold-light transition-colors flex items-center gap-1.5">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                    Login / Register
+                    Account / Register
                 </a>
-            @endauth
+            @endif
         </div>
     </div>
 </div>
 
-{{-- ============ MAIN HEADER ============ --}}
-<header class="bg-white border-b border-gray-200">
+{{-- ============================ STICKY HEADER ============================ --}}
+<header class="sticky top-0 z-50 bg-white/95 backdrop-blur-md shadow-md border-b border-gold/20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center gap-6 h-24">
+        <div class="flex items-center justify-between h-20 gap-4">
 
-            {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center shrink-0">
-                <img src="{{ asset('img/logo-ananya.png') }}" alt="Ananya" class="h-14 w-auto max-w-[240px] object-contain">
+            {{-- Brand logo (client-supplied artwork) --}}
+            <a href="{{ route('home') }}" class="flex items-center shrink-0 group">
+                <img src="{{ asset('img/logo-ananya.png') }}" alt="{{ config('store.name') }}"
+                     class="h-12 w-auto max-w-[210px] object-contain group-hover:scale-[1.03] transition-transform duration-300">
             </a>
 
-            {{-- Search --}}
-            <form action="{{ route('shop.index') }}" method="GET" class="hidden md:flex flex-1 max-w-2xl mx-auto">
-                <div class="relative w-full">
+            {{-- Search with category scope --}}
+            <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex flex-1 max-w-xl mx-8 relative">
+                <div class="relative w-full flex items-center border-2 border-gray-200 rounded-full bg-gray-50/80 focus-within:border-brand focus-within:bg-white transition-all shadow-inner overflow-hidden">
+                    <select name="category" class="bg-transparent text-xs font-semibold text-ink-muted pl-4 pr-2 py-2.5 border-r border-gray-200 focus:outline-none focus:ring-0 cursor-pointer max-w-[9.5rem] truncate">
+                        <option value="">All Categories</option>
+                        @foreach($navCats as $c)
+                            <option value="{{ $c->slug }}" {{ $activeCat === $c->slug ? 'selected' : '' }}>{{ $c->name }}</option>
+                        @endforeach
+                    </select>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Search for products, categories..."
-                        class="w-full pl-5 pr-16 py-3 rounded-full bg-white border border-gray-300 text-sm text-ink placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand shadow-sm">
-                    <button type="submit" class="absolute right-1.5 top-1/2 -translate-y-1/2 w-11 h-9 rounded-full bg-brand hover:bg-brand-dark text-white flex items-center justify-center transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                           placeholder="Search appliances, brass idols, temple items..."
+                           class="w-full px-4 py-2 text-sm bg-transparent border-0 focus:outline-none focus:ring-0 text-ink placeholder-gray-400">
+                    <button type="submit" class="brand-gradient-bg hover:opacity-95 text-white p-2.5 mr-1 rounded-full transition-all flex items-center justify-center shrink-0">
+                        <svg class="w-4 h-4 text-gold-light" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </button>
                 </div>
             </form>
 
-            {{-- Actions --}}
-            <div class="flex items-center gap-6 shrink-0">
-                <a href="{{ route('shop.index') }}" class="hidden lg:flex items-center gap-2 text-brand hover:text-brand-dark transition">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
-                    <span class="text-sm font-medium">Compare</span>
-                </a>
-                <a href="{{ route('cart.index') }}" class="flex items-center gap-2 text-brand hover:text-brand-dark transition">
-                    <span class="relative">
-                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/></svg>
-                        <span class="absolute -top-2 -right-2 bg-brand text-white text-[10px] font-bold rounded-full w-4.5 h-4.5 min-w-[18px] h-[18px] flex items-center justify-center px-1">{{ $navCartCount > 99 ? '99+' : $navCartCount }}</span>
+            {{-- Utilities + cart --}}
+            <div class="flex items-center gap-4 sm:gap-6">
+                <a href="{{ route('shop.index') }}" class="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-ink-muted hover:text-brand transition-colors group">
+                    <span class="p-2 rounded-full group-hover:bg-brand-50 transition-colors">
+                        <svg class="w-5 h-5 text-gray-600 group-hover:text-brand" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg>
                     </span>
-                    <span class="hidden sm:block text-sm font-medium leading-tight">My Cart</span>
+                    <span class="hidden md:inline">Compare</span>
                 </a>
-            </div>
-        </div>
-    </div>
 
-    {{-- ============ CATEGORY NAV ============ --}}
-    <nav class="border-t border-gray-200 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between">
-                <div class="hidden md:flex items-center justify-between w-full">
-                    @foreach($mainNav as $item)
-                        <a href="{{ $item['url'] }}" class="py-3.5 text-[13px] font-semibold tracking-wide uppercase text-brand hover:text-brand-dark transition-colors relative group">
-                            {{ $item['label'] }}
-                            <span class="absolute left-0 -bottom-px h-0.5 w-0 bg-brand group-hover:w-full transition-all duration-300"></span>
-                        </a>
-                    @endforeach
-                </div>
-                {{-- Mobile nav toggle --}}
-                <button class="md:hidden flex items-center gap-2 py-3 text-brand font-semibold text-sm" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')">
+                <a href="{{ route('cart.index') }}"
+                   class="flex items-center gap-2 brand-gradient-bg text-white px-4 py-2.5 rounded-full shadow-md hover:shadow-lg hover:brightness-110 transition-all border border-gold/40 group">
+                    <svg class="w-5 h-5 text-gold-light group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                    <span class="text-xs font-bold tracking-wide">MY CART</span>
+                    <span class="bg-gold text-brand-darker text-[11px] font-black w-5 h-5 rounded-full flex items-center justify-center shadow">{{ $navCartCount > 99 ? '99+' : $navCartCount }}</span>
+                </a>
+
+                <button type="button" onclick="document.getElementById('mobile-menu').classList.toggle('hidden')"
+                        class="lg:hidden text-ink-muted hover:text-brand p-2">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
-                    Menu
                 </button>
             </div>
-            <div id="mobile-menu" class="md:hidden hidden pb-3">
-                @foreach($mainNav as $item)
-                    <a href="{{ $item['url'] }}" class="block px-2 py-2 text-sm font-medium text-brand hover:text-brand-dark uppercase tracking-wide">{{ $item['label'] }}</a>
+        </div>
+
+        {{-- Mobile search --}}
+        <form action="{{ route('shop.index') }}" method="GET" class="lg:hidden pb-4">
+            <div class="relative w-full flex items-center border border-gray-300 rounded-lg bg-white overflow-hidden shadow-sm">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Search products..."
+                       class="w-full px-4 py-2 text-sm border-0 focus:outline-none focus:ring-0 text-ink">
+                <button type="submit" class="brand-gradient-bg text-white px-4 py-2.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </button>
+            </div>
+        </form>
+
+        {{-- Category nav: labels are black; only the featured brand is red --}}
+        <nav class="hidden lg:flex items-center justify-between border-t border-gray-100 py-3 text-sm font-semibold tracking-wide text-ink">
+            <div class="flex space-x-8">
+                @foreach($navItems as $item)
+                    <a href="{{ route('shop.index') }}?category={{ $item['slug'] }}"
+                       class="relative py-1 group flex items-center gap-1.5 transition-colors hover:text-brand">
+                        <span class="{{ isset($item['highlight']) ? 'text-brand font-bold' : '' }}">{{ $item['label'] }}</span>
+                        @if($item['badge'])
+                            <span class="bg-gold/20 text-brand-dark text-[10px] uppercase font-extrabold px-1.5 py-0.5 rounded border border-gold/40">{{ $item['badge'] }}</span>
+                        @endif
+                        <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-brand group-hover:w-full transition-all duration-300"></span>
+                    </a>
                 @endforeach
             </div>
+            <a href="{{ route('shop.index') }}"
+               class="flex items-center gap-1.5 text-brand font-extrabold text-xs tracking-wider uppercase bg-brand-50 px-3 py-1.5 rounded-full border border-brand-100 hover:brand-gradient-bg hover:text-white hover:border-transparent transition-all">
+                <svg class="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20"><path d="M10 1l2.09 5.26L18 7.27l-4 3.9.94 5.83L10 14.27 5.06 17l.94-5.83-4-3.9 5.91-1.01L10 1z"/></svg>
+                Exclusive Offers
+            </a>
+        </nav>
+
+        {{-- Mobile nav --}}
+        <div id="mobile-menu" class="lg:hidden hidden border-t border-gray-100 py-2">
+            @foreach($navItems as $item)
+                <a href="{{ route('shop.index') }}?category={{ $item['slug'] }}"
+                   class="block px-2 py-2.5 text-sm font-semibold {{ isset($item['highlight']) ? 'text-brand' : 'text-ink' }} hover:text-brand">{{ $item['label'] }}</a>
+            @endforeach
+            @if(Auth::check())
+                <a href="{{ route('customer.dashboard') }}" class="block px-2 py-2.5 text-sm font-semibold text-ink hover:text-brand">My Account</a>
+            @else
+                <a href="{{ route('login') }}" class="block px-2 py-2.5 text-sm font-semibold text-ink hover:text-brand">Login / Register</a>
+            @endif
         </div>
-    </nav>
+    </div>
 </header>
 
-{{-- Flash messages --}}
+{{-- ============================ FLASH MESSAGES ============================ --}}
 @if(session('success'))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-lg text-sm">{{ session('success') }}</div>
+        <div class="flex items-start gap-3 bg-green-50 border border-green-200 text-green-800 px-4 py-3 rounded-xl text-sm">
+            <svg class="w-5 h-5 shrink-0 mt-px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ session('success') }}</span>
+        </div>
     </div>
 @endif
 @if(session('error'))
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">{{ session('error') }}</div>
+        <div class="flex items-start gap-3 bg-brand-50 border border-brand-100 text-brand-darker px-4 py-3 rounded-xl text-sm">
+            <svg class="w-5 h-5 shrink-0 mt-px" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <span>{{ session('error') }}</span>
+        </div>
     </div>
 @endif
 @if($errors->any())
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
-        <div class="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
-            <ul class="list-disc list-inside">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
+        <div class="bg-brand-50 border border-brand-100 text-brand-darker px-4 py-3 rounded-xl text-sm">
+            <ul class="list-disc list-inside space-y-0.5">@foreach($errors->all() as $e)<li>{{ $e }}</li>@endforeach</ul>
         </div>
     </div>
 @endif
@@ -150,120 +189,91 @@
     @yield('content')
 </main>
 
-{{-- ============ VALUES BAND ============ --}}
-<section class="bg-ink text-white relative overflow-hidden">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
-            <div class="text-center">
-                <div class="mx-auto mb-3 w-11 h-11 rounded-full border border-brand/50 flex items-center justify-center text-brand-soft">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                </div>
-                <h4 class="font-serif text-brand-soft text-lg">Premium Quality</h4>
-                <p class="text-xs text-white/60 mt-1">Finest products, expertly curated</p>
-            </div>
-            <div class="text-center">
-                <div class="mx-auto mb-3 w-11 h-11 rounded-full border border-brand/50 flex items-center justify-center text-brand-soft">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
-                </div>
-                <h4 class="font-serif text-brand-soft text-lg">Divine Tradition</h4>
-                <p class="text-xs text-white/60 mt-1">Bringing tradition into your life</p>
-            </div>
-            <div class="flex justify-center">
-                <span class="relative flex items-center justify-center w-20 h-20 rounded-full border-2 border-brand/60">
-                    <span class="absolute inset-2 rounded-full border border-brand/30"></span>
-                    <span class="font-serif text-4xl font-bold text-brand-soft">A</span>
-                </span>
-            </div>
-            <div class="text-center">
-                <div class="mx-auto mb-3 w-11 h-11 rounded-full border border-brand/50 flex items-center justify-center text-brand-soft">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                </div>
-                <h4 class="font-serif text-brand-soft text-lg">Modern Excellence</h4>
-                <p class="text-xs text-white/60 mt-1">Blending technology with tradition</p>
-            </div>
-            <div class="text-center lg:text-left">
-                <h4 class="font-semibold text-brand-soft text-sm tracking-wide uppercase">Stay Updated</h4>
-                <p class="text-xs text-white/60 mt-1 mb-3">Subscribe for special offers and latest updates</p>
-                <form action="{{ route('home') }}" method="GET" class="flex">
-                    <input type="email" name="newsletter" placeholder="Enter your email" class="flex-1 min-w-0 px-3 py-2 rounded-l-md bg-white text-ink text-sm border-0 focus:ring-2 focus:ring-brand placeholder-stone-400">
-                    <button type="submit" class="px-3 rounded-r-md bg-brand hover:bg-brand-dark text-white transition">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-</section>
+{{-- ============================ FOOTER ============================ --}}
+<footer class="bg-gray-950 text-gray-300 pt-16 pb-8 border-t-4 border-gold mt-20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-{{-- ============ FOOTER ============ --}}
-<footer class="bg-ink text-white/70">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-8 text-sm">
+        {{-- Newsletter --}}
+        <div class="brand-gradient-bg rounded-2xl p-8 mb-12 shadow-2xl border border-gold/30 flex flex-col lg:flex-row items-center justify-between gap-6">
             <div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-4">Shop by Category</h5>
-                <ul class="space-y-2.5">
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Kitchen Appliances</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Brass Statues</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Temple Items</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Hotel Kitchen Appliances</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Sowbhagya Brand</a></li>
-                </ul>
+                <h3 class="font-serif text-2xl font-bold text-white">Join the {{ config('store.name') }} Circle</h3>
+                <p class="text-xs text-white/80 mt-1">Subscribe for exclusive previews, artisan stories and special offers.</p>
             </div>
-            <div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-4">Customer Service</h5>
-                <ul class="space-y-2.5">
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Track Order</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Returns &amp; Refunds</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Shipping Policy</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">FAQ's</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Contact Us</a></li>
-                </ul>
-            </div>
-            <div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-4">Company</h5>
-                <ul class="space-y-2.5">
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">About Us</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Our Story</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Careers</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Blog</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Privacy Policy</a></li>
-                </ul>
-            </div>
-            <div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-4">Useful Links</h5>
-                <ul class="space-y-2.5">
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Gift Cards &amp; Discounts</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Terms &amp; Conditions</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Bulk &amp; B2B</a></li>
-                    <li><a href="{{ route('shop.index') }}" class="hover:text-brand-soft transition">Corporate Enquiries</a></li>
-                </ul>
-            </div>
-            <div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-4">Follow Us</h5>
-                <div class="flex gap-3 mb-6">
-                    @foreach(['facebook','instagram','youtube','whatsapp'] as $soc)
-                        <a href="#" class="w-9 h-9 rounded-full border border-white/25 flex items-center justify-center text-brand-soft hover:bg-brand hover:text-white transition">
+            <form action="{{ route('home') }}" method="GET" class="w-full lg:w-auto flex items-center gap-2">
+                <input type="email" name="newsletter" placeholder="Enter your email address"
+                       class="px-4 py-3 rounded-xl bg-black/40 border border-gold/40 text-sm text-white placeholder-gray-300 focus:outline-none focus:ring-0 focus:border-gold w-full sm:w-80">
+                <button type="submit" class="gold-gradient-bg text-brand-darker font-black px-6 py-3 rounded-xl hover:brightness-110 transition-all shrink-0">
+                    Subscribe
+                </button>
+            </form>
+        </div>
+
+        {{-- Columns --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-800">
+
+            <div class="lg:col-span-2 space-y-4">
+                <a href="{{ route('home') }}" class="inline-flex items-center">
+                    <img src="{{ asset('img/logo-ananya.png') }}" alt="{{ config('store.name') }}"
+                         class="h-11 w-auto max-w-[190px] object-contain bg-white/95 rounded-lg px-2.5 py-1.5">
+                </a>
+                <p class="text-xs text-gray-400 leading-relaxed max-w-sm">
+                    {{ config('store.name') }} blends timeless tradition with modern culinary innovation &mdash;
+                    sourcing the finest brass sculptures, temple essentials and top-tier kitchen machinery.
+                </p>
+                <div class="flex items-center space-x-3 pt-2">
+                    @foreach(array('facebook','instagram','youtube') as $soc)
+                        <a href="#" aria-label="{{ $soc }}" class="w-8 h-8 rounded-full bg-gray-900 border border-gray-800 flex items-center justify-center hover:text-gold transition-colors">
                             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                                @if($soc==='facebook')<path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898v-2.89h2.54V9.797c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
-                                @elseif($soc==='instagram')<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                                @elseif($soc==='youtube')<path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                @else<path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.463 3.488"/>@endif
+                                @if($soc === 'facebook')<path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987H7.898v-2.89h2.54V9.797c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+                                @elseif($soc === 'instagram')<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                                @else<path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>@endif
                             </svg>
                         </a>
                     @endforeach
                 </div>
-                <h5 class="text-brand-soft font-semibold uppercase tracking-wider text-xs mb-3">We Accept</h5>
-                <div class="flex flex-wrap gap-2">
-                    @foreach(['VISA','MASTERCARD','RuPay','UPI'] as $pay)
-                        <span class="px-2.5 py-1 rounded bg-white text-ink text-[10px] font-bold tracking-wide">{{ $pay }}</span>
-                    @endforeach
-                </div>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gold text-sm mb-4 tracking-wider uppercase">Shop Categories</h4>
+                <ul class="space-y-2.5 text-xs text-gray-400">
+                    @forelse($navCats->take(5) as $c)
+                        <li><a href="{{ route('shop.index') }}?category={{ $c->slug }}" class="hover:text-gold transition-colors">{{ $c->name }}</a></li>
+                    @empty
+                        <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">All Products</a></li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gold text-sm mb-4 tracking-wider uppercase">Customer Service</h4>
+                <ul class="space-y-2.5 text-xs text-gray-400">
+                    <li><a href="{{ Auth::check() ? route('customer.orders') : route('login') }}" class="hover:text-gold transition-colors">Track Your Order</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Returns &amp; Refunds</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Shipping Information</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Frequently Asked Questions</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Contact Support</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-serif font-bold text-gold text-sm mb-4 tracking-wider uppercase">Our Company</h4>
+                <ul class="space-y-2.5 text-xs text-gray-400">
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">About {{ config('store.name') }}</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Our Artisans &amp; Heritage</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Bulk &amp; Corporate Orders</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Terms of Service</a></li>
+                    <li><a href="{{ route('shop.index') }}" class="hover:text-gold transition-colors">Privacy Policy</a></li>
+                </ul>
             </div>
         </div>
-    </div>
-    <div class="border-t border-brand/15">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 text-center text-xs text-white/50">
-            &copy; {{ date('Y') }} Ananya. All rights reserved. &nbsp;|&nbsp; Handcrafted with tradition.
+
+        <div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+            <p>&copy; {{ date('Y') }} {{ config('store.name') }} Store. All rights reserved.</p>
+            <div class="flex items-center space-x-2">
+                @foreach(array('VISA','MASTERCARD','UPI','NETBANKING') as $pay)
+                    <span class="px-2 py-1 bg-gray-900 rounded border border-gray-800 text-[10px] text-gray-300 font-bold">{{ $pay }}</span>
+                @endforeach
+            </div>
         </div>
     </div>
 </footer>

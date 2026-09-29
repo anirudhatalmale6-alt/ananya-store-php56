@@ -1,187 +1,166 @@
 @extends('layouts.store')
 
-@section('title', 'Shopping Cart - KitchenCraft & Brass')
+@section('title', 'Shopping Cart - ' . config('store.name'))
 
 @section('content')
 
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
     {{-- Breadcrumb --}}
-    <nav class="flex items-center text-sm text-stone-500 mb-6">
-        <a href="{{ route('home') }}" class="hover:text-amber-700 transition">Home</a>
-        <svg class="w-4 h-4 mx-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-        </svg>
-        <span class="text-stone-800 font-medium">Shopping Cart</span>
+    <nav class="flex items-center text-sm text-gray-500 mb-5">
+        <a href="{{ route('home') }}" class="hover:text-brand transition-colors">Home</a>
+        <svg class="w-4 h-4 mx-2 text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        <span class="text-ink font-medium">Shopping Cart</span>
     </nav>
 
-    <h1 class="text-2xl font-bold text-stone-800 mb-8">Shopping Cart</h1>
+    <div class="flex items-center gap-3 mb-8">
+        <span class="w-11 h-11 rounded-xl brand-gradient-bg flex items-center justify-center border border-gold/40 shrink-0">
+            <svg class="w-5 h-5 text-gold-light" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+        </span>
+        <div>
+            <h1 class="font-serif text-2xl font-bold text-ink">Your Shopping Cart</h1>
+            <p class="text-xs text-gray-500 mt-0.5">
+                {{ $cartItems->count() }} {{ Str::plural('item', $cartItems->count()) }} in your bag
+            </p>
+        </div>
+    </div>
 
-    @if(isset($cart) && $cart->cartItems->count())
-        <div class="flex flex-col lg:flex-row gap-8">
+    @if($cartItems->count())
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
 
-            {{-- Cart Items --}}
-            <div class="flex-1">
-                <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+            {{-- ============ ITEMS ============ --}}
+            <div class="flex-1 w-full space-y-4">
 
-                    {{-- Header (Desktop) --}}
-                    <div class="hidden md:grid grid-cols-12 gap-4 px-6 py-3 bg-stone-50 border-b border-stone-200 text-xs font-semibold text-stone-500 uppercase tracking-wider">
-                        <div class="col-span-6">Product</div>
-                        <div class="col-span-2 text-center">Price</div>
-                        <div class="col-span-2 text-center">Quantity</div>
-                        <div class="col-span-1 text-right">Total</div>
-                        <div class="col-span-1"></div>
-                    </div>
+                @foreach($cartItems as $item)
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-gold/40 hover:shadow-card transition-all">
 
-                    {{-- Cart Items --}}
-                    @foreach($cart->cartItems as $item)
-                        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 px-6 py-4 border-b border-stone-100 items-center">
-
-                            {{-- Product Info --}}
-                            <div class="md:col-span-6 flex items-center gap-4">
-                                <div class="w-20 h-20 shrink-0 overflow-hidden rounded-lg bg-stone-100">
-                                    @if($item->product && $item->product->thumbnail)
-                                        <img src="{{ asset('storage/' . $item->product->thumbnail) }}" alt="{{ $item->product ? $item->product->name : 'Product' }}" class="w-full h-full object-cover">
-                                    @else
-                                        <div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-100 to-stone-200">
-                                            <svg class="w-8 h-8 text-stone-300" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                            </svg>
-                                        </div>
-                                    @endif
+                        {{-- Thumbnail --}}
+                        <div class="w-20 h-20 shrink-0 rounded-lg bg-white border border-gray-100 p-1.5 overflow-hidden">
+                            @if($item->product && $item->product->thumbnail)
+                                <img src="{{ asset('storage/' . $item->product->thumbnail) }}"
+                                     alt="{{ $item->product->name }}" class="w-full h-full object-contain">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center rounded bg-gray-50">
+                                    <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                                 </div>
-                                <div>
-                                    @if($item->product)
-                                        <a href="{{ route('shop.show', $item->product->slug) }}" class="text-sm font-semibold text-stone-800 hover:text-amber-700 transition">
-                                            {{ $item->product->name }}
-                                        </a>
-                                        @if($item->product->category)
-                                            <p class="text-xs text-stone-400 mt-0.5">{{ $item->product->category->name }}</p>
-                                        @endif
-                                    @else
-                                        <span class="text-sm text-stone-400 italic">Product unavailable</span>
-                                    @endif
-                                </div>
-                            </div>
+                            @endif
+                        </div>
 
-                            {{-- Unit Price --}}
-                            <div class="md:col-span-2 text-center">
-                                <span class="md:hidden text-xs text-stone-500 font-medium">Price: </span>
-                                @if($item->product)
-                                    <span class="text-sm font-medium text-stone-700">{{ config('store.currency') }} {{ number_format($item->product->current_price, 2) }}</span>
+                        {{-- Name + unit price --}}
+                        <div class="flex-1 min-w-0">
+                            @if($item->product)
+                                <a href="{{ route('shop.show', $item->product->slug) }}"
+                                   class="text-sm font-bold text-ink hover:text-brand transition-colors line-clamp-2">
+                                    {{ $item->product->name }}
+                                </a>
+                                @if($item->product->category)
+                                    <p class="text-[11px] text-gray-400 mt-0.5">{{ $item->product->category->name }}</p>
                                 @endif
-                            </div>
+                                <p class="text-sm text-brand font-bold mt-1">
+                                    {{ config('store.currency') }} {{ number_format($item->product->current_price, 2) }}
+                                </p>
+                            @else
+                                <span class="text-sm text-gray-400 italic">Product no longer available</span>
+                            @endif
+                        </div>
 
-                            {{-- Quantity --}}
-                            <div class="md:col-span-2 flex justify-center">
-                                <form action="{{ route('cart.update', $item) }}" method="POST" class="flex items-center gap-1">
-                                    {{ csrf_field() }}
-                                    {{ method_field('PATCH') }}
-                                    <div class="flex items-center border border-stone-300 rounded-lg overflow-hidden">
-                                        <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}" class="px-2 py-1.5 bg-stone-50 hover:bg-stone-100 text-stone-600 transition">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/>
-                                            </svg>
-                                        </button>
-                                        <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="w-12 text-center border-x border-stone-300 py-1.5 text-sm focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
-                                        <button type="submit" name="quantity" value="{{ $item->quantity + 1 }}" class="px-2 py-1.5 bg-stone-50 hover:bg-stone-100 text-stone-600 transition">
-                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                        {{-- Quantity stepper --}}
+                        <div class="flex items-center gap-4 sm:gap-5">
+                            <form action="{{ route('cart.update', $item->id) }}" method="POST">
+                                {{ csrf_field() }}
+                                {{ method_field('PATCH') }}
+                                <div class="flex items-center border border-gray-200 rounded-lg bg-white overflow-hidden">
+                                    <button type="submit" name="quantity" value="{{ max(1, $item->quantity - 1) }}"
+                                            class="px-2.5 py-1.5 text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Decrease quantity">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 12H4"/></svg>
+                                    </button>
+                                    <input type="number" name="quantity" value="{{ $item->quantity }}" min="1"
+                                           class="w-12 text-center border-x border-gray-200 py-1.5 text-sm font-bold text-ink focus:outline-none focus:ring-0 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none">
+                                    <button type="submit" name="quantity" value="{{ $item->quantity + 1 }}"
+                                            class="px-2.5 py-1.5 text-gray-600 hover:bg-gray-100 transition-colors" aria-label="Increase quantity">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                    </button>
+                                </div>
+                            </form>
 
-                            {{-- Line Total --}}
-                            <div class="md:col-span-1 text-right">
-                                <span class="md:hidden text-xs text-stone-500 font-medium">Total: </span>
+                            {{-- Line total --}}
+                            <div class="text-right min-w-[6.5rem]">
+                                <p class="text-[10px] uppercase tracking-wider text-gray-400">Total</p>
                                 @if($item->product)
-                                    <span class="text-sm font-bold text-stone-800">{{ config('store.currency') }} {{ number_format($item->product->current_price * $item->quantity, 2) }}</span>
+                                    <p class="text-sm font-black text-ink">
+                                        {{ config('store.currency') }} {{ number_format($item->product->current_price * $item->quantity, 2) }}
+                                    </p>
                                 @endif
                             </div>
 
                             {{-- Remove --}}
-                            <div class="md:col-span-1 text-right">
-                                <form action="{{ route('cart.remove', $item) }}" method="POST" class="inline">
-                                    {{ csrf_field() }}
-                                    {{ method_field('DELETE') }}
-                                    <button type="submit" class="text-stone-400 hover:text-red-600 transition" title="Remove item">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                        </svg>
-                                    </button>
-                                </form>
-                            </div>
+                            <form action="{{ route('cart.remove', $item->id) }}" method="POST">
+                                {{ csrf_field() }}
+                                {{ method_field('DELETE') }}
+                                <button type="submit" class="p-2 rounded-full text-gray-400 hover:text-brand hover:bg-brand-50 transition-colors" title="Remove item">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                                </button>
+                            </form>
                         </div>
-                    @endforeach
-                </div>
+                    </div>
+                @endforeach
 
-                {{-- Continue Shopping --}}
-                <div class="mt-4">
-                    <a href="{{ route('shop.index') }}" class="inline-flex items-center text-amber-700 hover:text-amber-800 font-medium transition text-sm">
-                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18"/>
-                        </svg>
-                        Continue Shopping
-                    </a>
-                </div>
+                <a href="{{ route('shop.index') }}" class="inline-flex items-center gap-2 text-sm font-semibold text-ink hover:text-brand transition-colors pt-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16l-4-4m0 0l4-4m-4 4h18"/></svg>
+                    Continue Shopping
+                </a>
             </div>
 
-            {{-- Cart Summary --}}
-            <div class="lg:w-80 shrink-0">
-                <div class="bg-white rounded-xl shadow-sm border border-stone-200 p-6 sticky top-4">
-                    <h3 class="text-lg font-semibold text-stone-800 mb-4">Order Summary</h3>
+            {{-- ============ SUMMARY ============ --}}
+            <div class="w-full lg:w-[22rem] shrink-0">
+                <div class="bg-white rounded-2xl border border-gray-200 shadow-lux p-6 sticky top-28">
+                    <h3 class="font-serif text-lg font-bold text-ink pb-4 border-b border-gray-100">Order Summary</h3>
 
-                    @php
-                        $subtotal = 0;
-                        foreach ($cart->cartItems as $item) {
-                            if ($item->product) {
-                                $subtotal += $item->product->current_price * $item->quantity;
-                            }
-                        }
-                        $tax = $subtotal * 0.1;
-                        $total = $subtotal + $tax;
-                    @endphp
-
-                    <div class="space-y-3 text-sm">
-                        <div class="flex justify-between text-stone-600">
+                    <div class="space-y-3 text-sm py-4">
+                        <div class="flex justify-between text-gray-600">
                             <span>Subtotal</span>
-                            <span class="font-medium">{{ config('store.currency') }} {{ number_format($subtotal, 2) }}</span>
+                            <span class="font-semibold text-ink">{{ config('store.currency') }} {{ number_format($subtotal, 2) }}</span>
                         </div>
-                        <div class="flex justify-between text-stone-600">
-                            <span>Estimated Tax (10%)</span>
-                            <span class="font-medium">{{ config('store.currency') }} {{ number_format($tax, 2) }}</span>
-                        </div>
-                        <hr class="border-stone-200">
-                        <div class="flex justify-between text-stone-800">
-                            <span class="text-base font-semibold">Total</span>
-                            <span class="text-base font-bold">{{ config('store.currency') }} {{ number_format($total, 2) }}</span>
+                        <div class="flex justify-between text-gray-600">
+                            <span>Shipping</span>
+                            <span class="font-semibold text-green-600">FREE</span>
                         </div>
                     </div>
 
-                    <a href="{{ route('checkout.index') }}" class="mt-6 w-full inline-flex items-center justify-center py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-100">
+                        <span class="text-sm font-semibold text-ink">Total</span>
+                        <span class="font-serif font-bold text-xl text-brand">{{ config('store.currency') }} {{ number_format($subtotal, 2) }}</span>
+                    </div>
+
+                    <a href="{{ route('checkout.index') }}"
+                       class="mt-6 w-full brand-gradient-bg text-white font-bold py-3.5 rounded-xl shadow-lg hover:brightness-110 transition-all flex items-center justify-center gap-2 border border-gold/30">
                         Proceed to Checkout
-                        <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
                     </a>
+
+                    <div class="mt-5 space-y-2.5 text-[11px] text-gray-500">
+                        <p class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gold shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                            Secure checkout
+                        </p>
+                        <p class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-gold shrink-0" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Easy returns
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
     @else
-        {{-- Empty Cart --}}
-        <div class="text-center py-16 bg-white rounded-xl shadow-sm border border-stone-200">
-            <svg class="w-20 h-20 text-stone-300 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 100 4 2 2 0 000-4z"/>
-            </svg>
-            <h3 class="text-xl font-semibold text-stone-800">Your cart is empty</h3>
-            <p class="text-stone-500 mt-2">Looks like you haven't added anything to your cart yet.</p>
-            <a href="{{ route('shop.index') }}" class="inline-flex items-center mt-6 px-8 py-3 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-lg shadow-md hover:shadow-lg transition-all duration-300">
+        {{-- Empty state --}}
+        <div class="text-center py-20 bg-gray-50 rounded-2xl border border-gray-100">
+            <svg class="w-20 h-20 text-gray-300 mx-auto mb-5" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+            <h3 class="font-serif text-xl font-bold text-ink">Your cart is empty</h3>
+            <p class="text-sm text-gray-500 mt-2">Browse the collection and add something you love.</p>
+            <a href="{{ route('shop.index') }}"
+               class="inline-flex items-center gap-2 mt-7 px-8 py-3.5 brand-gradient-bg text-white font-bold rounded-xl shadow-lg hover:brightness-110 transition-all border border-gold/30">
                 Start Shopping
-                <svg class="ml-2 w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                </svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
             </a>
         </div>
     @endif

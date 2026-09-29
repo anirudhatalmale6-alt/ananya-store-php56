@@ -268,6 +268,79 @@ Run on PHP 5.6.40 + MySQL 5.7.44:
 - Both notification emails render with every required field
 - The `.sql` dump re-imports cleanly into an empty database
 
+## Troubleshooting
+
+### "The only supported ciphers are AES-128-CBC and AES-256-CBC with the correct key lengths."
+
+`APP_KEY` is the wrong length. `config/app.php` uses **AES-256-CBC**, which
+needs a **32-byte** key — that is `base64:` followed by **44** base64
+characters ending in `=`.
+
+A key like `base64:QGlVleGwHZ1htgltoHPh8Q==` is only 24 base64 characters,
+which decodes to **16 bytes**, so Laravel refuses it and every request 500s in
+the `EncryptCookies` middleware.
+
+Fix — generate a correct key:
+
+```bash
+php artisan key:generate
+```
+
+If that is not available (no SSH on shared hosting), use the bundled helper:
+
+```bash
+php keygen.php            # prints a valid key
+php keygen.php --write    # writes it straight into .env
+```
+
+`keygen.php` sizes the key from `config/app.php` so it always matches the
+cipher, and uses `openssl_random_pseudo_bytes()` rather than `random_bytes()`.
+
+> **This is the usual cause of a bad key on PHP 5.6.** `random_bytes()` is a
+> PHP 7 function. Laravel's own `key:generate` only works on 5.6 because
+> Composer autoloads the `paragonie/random_compat` polyfill. A hand-written
+> one-liner such as
+> `php -r 'echo base64_encode(random_bytes(32));'`
+> dies on PHP 5.6 with *"Call to undefined function random_bytes()"* — which is
+> why keys often end up being copied from the web at the wrong length.
+
+Quick length check:
+
+```bash
+php -r '$k=getenv("APP_KEY"); echo strlen(base64_decode(substr($k,7)))," bytes\n";'
+# must print: 32 bytes
+```
+
+### Changing .env has no effect
+
+If `bootstrap/cache/config.php` exists, Laravel reads that instead of `.env`.
+Delete it, or run `php artisan config:clear`. `keygen.php` warns you when this
+file is present.
+
+### Values with special characters in .env
+
+`vlucas/phpdotenv` v2 (the version Laravel 5.4 uses) only expands `${VAR}`
+style references, so a bare `$` in a password is safe, and only the **first**
+`=` on a line separates key from value — so a password containing `=` is fine
+unquoted. A value containing a `#` **must** be quoted, or everything after the
+`#` is treated as a comment and silently dropped.
+
+### Serving from a `/public` sub-path
+
+If the site is reached at `https://example.com/public`, the document root is
+the Laravel project root rather than `public/`. Laravel still builds correct
+URLs (5.4 derives them from the request, not from `APP_URL`), so the site
+works — but confirm that `.env`, `composer.json`, `storage/` and `vendor/` are
+**not** reachable over the web. Point the document root at `public/` when the
+host allows it.
+
+### Before going live
+
+Set `APP_ENV=production` and `APP_DEBUG=false`. With debug on, any error
+renders a full stack trace — including configuration values — to the public.
+
+---
+
 ## Security note
 
 PHP 5.6 reached end-of-life in **December 2018** and Laravel 5.4 in 2017 —
